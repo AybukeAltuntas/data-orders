@@ -69,7 +69,12 @@ class Order:
         Returns a DataFrame with:
         order_id, dim_is_five_star, dim_is_one_star, review_score
         """
-        pass  # YOUR CODE HERE
+        data = self.data
+        reviews = data["order_reviews"].copy()
+        reviews["dim_is_five_star"] = reviews["review_score"].map({
+        5: 1}).fillna(0).astype(int)
+        reviews["dim_is_one_star"] = np.where(reviews["review_score"]==1, 1, 0)
+        reviews[["order_id","dim_is_five_star","dim_is_one_star","review_score"]]
 
     def get_number_items(self):
         """
