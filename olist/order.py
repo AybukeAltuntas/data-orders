@@ -143,4 +143,26 @@ class Order:
         'distance_seller_customer']
         """
         # Hint: make sure to re-use your instance methods defined above
-        pass  # YOUR CODE HERE
+
+        wait_time = self.get_wait_time(is_delivered=is_delivered)
+        reviews = self.get_review_score()
+        df_items = self.get_number_items()
+        df_sellers = self.get_number_sellers()
+        df_price_freight = self.get_price_and_freight()
+
+        df = (
+            wait_time
+            .merge(reviews, on="order_id", how="inner")
+            .merge(df_items, on="order_id", how="inner")
+            .merge(df_sellers, on="order_id", how="inner")
+            .merge(df_price_freight, on="order_id", how="inner")
+        )
+
+        if with_distance_seller_customer:
+            df_distance = self.get_distance_seller_customer()
+            df = df.merge(df_distance, on="order_id", how="inner")
+
+        # NaN temizleme
+        df = df.dropna()
+
+        return df
